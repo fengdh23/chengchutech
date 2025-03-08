@@ -1,100 +1,99 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // 收益计算器功能
+    const calculateBtn = document.getElementById('calculate-btn');
+    const resultDiv = document.getElementById('calculator-result');
+    
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', function() {
+            const roofSize = parseFloat(document.getElementById('roof-size').value);
+            const electricityPrice = parseFloat(document.getElementById('electricity-price').value);
+            const sunlightHours = parseFloat(document.getElementById('sunlight-hours').value);
+            
+            // 简单计算逻辑
+            // 假设每平方米可安装约0.15kW的光伏组件
+            const systemCapacity = roofSize * 0.15; // 单位：kW
+            
+            // 每kW每天发电量 = 日照时间 * 0.8(效率因子)
+            const dailyGeneration = systemCapacity * sunlightHours * 0.8; // 单位：kWh
+            
+            // 年发电量
+            const yearlyGeneration = dailyGeneration * 365; // 单位：kWh
+            
+            // 传统光伏年收益
+            const traditionalYearlySavings = yearlyGeneration * electricityPrice; // 单位：元
+            
+            // AI优化后的收益（假设提升30%）
+            const aiOptimizedYearlySavings = traditionalYearlySavings * 1.3; // 单位：元
+            
+            // 系统成本估算（假设每kW约5000元）
+            const systemCost = systemCapacity * 5000; // 单位：元
+            
+            // 传统回收期
+            const traditionalPaybackPeriod = systemCost / traditionalYearlySavings; // 单位：年
+            
+            // AI优化回收期
+            const aiOptimizedPaybackPeriod = systemCost / aiOptimizedYearlySavings; // 单位：年
+            
+            // 显示结果
+            resultDiv.innerHTML = `
+                <h4>您的光伏系统预估</h4>
+                <p>系统容量: <strong>${systemCapacity.toFixed(2)} kW</strong></p>
+                <p>年发电量: <strong>${yearlyGeneration.toFixed(2)} kWh</strong></p>
+                <p>传统光伏年收益: <strong>${traditionalYearlySavings.toFixed(2)} 元</strong></p>
+                <p>AI优化年收益: <strong>${aiOptimizedYearlySavings.toFixed(2)} 元</strong> (提升30%)</p>
+                <p>系统投资回报期: <strong>${aiOptimizedPaybackPeriod.toFixed(1)} 年</strong> (传统系统: ${traditionalPaybackPeriod.toFixed(1)} 年)</p>
+                <p>20年总收益: <strong>${(aiOptimizedYearlySavings * 20).toFixed(2)} 元</strong></p>
+            `;
+        });
+    }
+    
+    // 表单提交处理
+    const inquiryForm = document.getElementById('inquiry-form');
+    
+    if (inquiryForm) {
+        inquiryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const message = document.getElementById('message').value;
+            
+            // 在实际应用中，这里应该发送数据到服务器
+            // 这里仅做演示，显示提交成功信息
+            
+            alert(`感谢您的咨询，${name}！我们的客服团队将在24小时内联系您。`);
+            inquiryForm.reset();
+        });
+    }
+    
     // 平滑滚动效果
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop,
                     behavior: 'smooth'
                 });
             }
         });
     });
-
-    // 表单验证和提交处理
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // 获取表单数据
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                message: document.getElementById('message').value
-            };
-
-            // 简单的表单验证
-            if (!validateForm(formData)) {
-                return;
-            }
-
-            // 模拟表单提交
-            submitForm(formData);
-        });
-    }
-
-    // 表单验证函数
-    function validateForm(data) {
-        // 验证姓名
-        if (data.name.length < 2) {
-            alert('请输入有效的姓名');
-            return false;
-        }
-
-        // 验证手机号
-        const phoneRegex = /^1[3-9]\d{9}$/;
-        if (!phoneRegex.test(data.phone)) {
-            alert('请输入有效的手机号码');
-            return false;
-        }
-
-        // 验证邮箱
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(data.email)) {
-            alert('请输入有效的邮箱地址');
-            return false;
-        }
-
-        // 验证留言内容
-        if (data.message.length < 10) {
-            alert('留言内容至少需要10个字符');
-            return false;
-        }
-
-        return true;
-    }
-
-    // 模拟表单提交函数
-    function submitForm(data) {
-        // 在实际应用中，这里应该是一个API请求
-        console.log('提交的表单数据:', data);
+    
+    // 导航栏滚动效果
+    window.addEventListener('scroll', function() {
+        const nav = document.querySelector('nav');
         
-        // 模拟提交成功
-        alert('感谢您的咨询，我们会尽快与您联系！');
-        
-        // 重置表单
-        contactForm.reset();
-    }
-
-    // 添加滚动动画效果
-    const observerOptions = {
-        threshold: 0.1
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    // 观察所有需要动画的元素
-    document.querySelectorAll('.principle-step, .benefit-card').forEach(element => {
-        observer.observe(element);
+        if (window.scrollY > 50) {
+            nav.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            nav.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        } else {
+            nav.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+            nav.style.boxShadow = 'none';
+        }
     });
 });
